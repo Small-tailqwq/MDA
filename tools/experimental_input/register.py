@@ -2,14 +2,26 @@
 
 import copy
 import json
+import re
 import sys
 from pathlib import Path
+
+
+def experimental_version(version):
+    match = re.fullmatch(r'(v?\d+\.\d+\.\d+)(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?', version or '')
+    if not match:
+        raise SystemExit(f'无法识别安装包版本：{version!r}')
+    return f'{match.group(1)}-experimental'
 
 
 def main():
     root = Path(sys.argv[1])
     interface_path = root / 'interface.json'
     interface = json.loads(interface_path.read_text(encoding='utf-8-sig'))
+    # 官方更新会覆盖自编译的客户端和框架。MXU 不更新非 beta/rc 的预发布版本，
+    # 也不检查没有 mirrorchyan_rid 的项目。
+    interface['version'] = experimental_version(interface.get('version'))
+    interface.pop('mirrorchyan_rid', None)
     controllers = interface['controller']
     if any(item['name'] in ('Logitech', 'Razer') for item in controllers):
         raise SystemExit('安装包已包含 Logitech 或 Razer 控制器')
