@@ -19,6 +19,8 @@ on:
       - "agent/**"
       - "tools/experimental_input/**"
       - "**.py"
+      - "pyproject.toml"
+      - "uv.lock"
   pull_request:
     branches:
       - "**"
@@ -28,6 +30,8 @@ on:
       - "agent/**"
       - "tools/experimental_input/**"
       - "**.py"
+      - "pyproject.toml"
+      - "uv.lock"
   workflow_dispatch:
 
 jobs:
